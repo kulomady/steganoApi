@@ -1,6 +1,8 @@
 package com.kulomady.mystegano.controller;
 
 import com.kulomady.mystegano.exception.ResourceNotFoundException;
+import com.kulomady.mystegano.exception.UserAlreadyRegisteredException;
+import com.kulomady.mystegano.exception.UserNotAuthorizeException;
 import com.kulomady.mystegano.model.User;
 import com.kulomady.mystegano.payload.UploadFileResponse;
 import com.kulomady.mystegano.repository.UserRepository;
@@ -24,18 +26,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    UserRepository userRepository;
-
+    private UserRepository userRepository;
 
 
     @Autowired
     private FileStorageService fileStorageService;
-
 
     // Get All Users
     @GetMapping("/users")
@@ -71,6 +71,49 @@ public class UserController {
                 file.getContentType(), file.getSize());
     }
 
+    @PostMapping("/register")
+    @ResponseBody
+
+    public User register(@Valid @RequestPart String username,
+                                       @Valid @RequestPart String password,
+                                       @Valid @RequestPart String email,
+                                       @Valid @RequestPart String secreet_message,
+                                       @RequestPart(value = "file") MultipartFile file) throws UserAlreadyRegisteredException {
+
+        if (userRepository.findById(username).isPresent()) {
+            throw new UserAlreadyRegisteredException("User already registered");
+        } else {
+            String fileName = fileStorageService.storeFile(file);
+
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path(fileName)
+                    .toUriString();
+
+            User user = new User(username, password, email, secreet_message, fileDownloadUri);
+            userRepository.save(user);
+
+           return user;
+        }
+
+    }
+
+    // Create a new User
+    @PostMapping("/login")
+    public User login(@Valid @RequestBody User user) throws UserNotAuthorizeException {
+        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword(),user.getSecreetMessage());
+        if(userResult == null || userResult.getUsername().isEmpty()){
+            logger.error("errror: " );
+            throw new UserNotAuthorizeException("Failed Login");
+        }else {
+            logger.error("sukses: " + userResult.getUsername());
+            return userRepository.findById(
+                    userResult.getUsername()).isPresent() ? userRepository.findById(userResult.getUsername()).get()
+                    : userResult;
+        }
+    }
+
+
     @PostMapping("/uploadMultipleFiles")
     public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         return Arrays.asList(files)
@@ -93,7 +136,7 @@ public class UserController {
         }
 
         // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = "application/octet-stream";
         }
 

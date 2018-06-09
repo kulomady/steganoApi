@@ -1,7 +1,5 @@
 package com.kulomady.mystegano.model;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
@@ -14,8 +12,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-//@JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-//        allowGetters = true)
 
 public class User implements Serializable {
 
@@ -24,8 +20,26 @@ public class User implements Serializable {
     private String username;
     @NotBlank
     private String password;
-    @NotBlank
     private String email;
+    @NotBlank
+    private String secreetMessage;
+    private String digitalKeyUrl;
+
+
+
+    public User() {}
+
+    public User(@NotBlank String username,
+                @NotBlank String password,
+                @NotBlank String email,
+                @NotBlank String secreetMessage,
+                @NotBlank String digitalKeyUrl) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.secreetMessage = secreetMessage;
+        this.digitalKeyUrl = digitalKeyUrl;
+    }
 
     public String getUsername() {
         return username;
@@ -49,5 +63,21 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSecreetMessage() {
+        return secreetMessage;
+    }
+
+    public void setSecreetMessage(String secreetMessage) {
+        this.secreetMessage = secreetMessage;
+    }
+
+    public String getDigitalKeyUrl() {
+        return digitalKeyUrl;
+    }
+
+    public void setDigitalKeyUrl(String digitalKeyUrl) {
+        this.digitalKeyUrl = digitalKeyUrl;
     }
 }
