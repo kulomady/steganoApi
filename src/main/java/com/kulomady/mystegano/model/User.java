@@ -22,7 +22,7 @@ public class User implements Serializable {
     private String password;
     private String email;
     @NotBlank
-    private String secreetMessage;
+    private String secreetKey;
     private String digitalKeyUrl;
 
 
@@ -31,13 +31,14 @@ public class User implements Serializable {
 
     public User(@NotBlank String username,
                 @NotBlank String password,
-                @NotBlank String email,
-                @NotBlank String secreetMessage,
-                @NotBlank String digitalKeyUrl) {
+                String email,
+                @NotBlank String secreetKey,
+                String digitalKeyUrl) {
+
         this.username = username;
         this.password = password;
         this.email = email;
-        this.secreetMessage = secreetMessage;
+        this.secreetKey = secreetKey;
         this.digitalKeyUrl = digitalKeyUrl;
     }
 
@@ -65,12 +66,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getSecreetMessage() {
-        return secreetMessage;
+    public String getSecreetKey() {
+        return secreetKey;
     }
 
-    public void setSecreetMessage(String secreetMessage) {
-        this.secreetMessage = secreetMessage;
+    public void setSecreetKey(String secreetKey) {
+        this.secreetKey = secreetKey;
     }
 
     public String getDigitalKeyUrl() {

@@ -77,7 +77,7 @@ public class UserController {
     public User register(@Valid @RequestPart String username,
                                        @Valid @RequestPart String password,
                                        @Valid @RequestPart String email,
-                                       @Valid @RequestPart String secreet_message,
+                                       @Valid @RequestPart String secreet_key,
                                        @RequestPart(value = "file") MultipartFile file) throws UserAlreadyRegisteredException {
 
         if (userRepository.findById(username).isPresent()) {
@@ -90,7 +90,7 @@ public class UserController {
                     .path(fileName)
                     .toUriString();
 
-            User user = new User(username, password, email, secreet_message, fileDownloadUri);
+            User user = new User(username, password, email, secreet_key, fileDownloadUri);
             userRepository.save(user);
 
            return user;
@@ -101,7 +101,7 @@ public class UserController {
     // Create a new User
     @PostMapping("/login")
     public User login(@Valid @RequestBody User user) throws UserNotAuthorizeException {
-        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword(),user.getSecreetMessage());
+        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword(),user.getSecreetKey());
         if(userResult == null || userResult.getUsername().isEmpty()){
             logger.error("errror: " );
             throw new UserNotAuthorizeException("Failed Login");
