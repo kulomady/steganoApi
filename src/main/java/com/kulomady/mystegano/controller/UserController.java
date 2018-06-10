@@ -60,7 +60,7 @@ public class UserController {
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file);
+        String fileName = fileStorageService.storeFile(file,"test");
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
@@ -83,7 +83,7 @@ public class UserController {
         if (userRepository.findById(username).isPresent()) {
             throw new UserAlreadyRegisteredException("User already registered");
         } else {
-            String fileName = fileStorageService.storeFile(file);
+            String fileName = fileStorageService.storeFile(file,username);
 
             String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                     .path("/downloadFile/")
