@@ -21,11 +21,8 @@ public class User implements Serializable {
     @NotBlank
     private String password;
     private String email;
-    @NotBlank
     private String secreetKey;
     private String digitalKeyUrl;
-
-
 
     public User() {}
 

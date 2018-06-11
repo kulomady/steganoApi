@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+
     @Autowired
     private UserRepository userRepository;
 
@@ -101,7 +102,7 @@ public class UserController {
     // Create a new User
     @PostMapping("/login")
     public User login(@Valid @RequestBody User user) throws UserNotAuthorizeException {
-        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword(),user.getSecreetKey());
+        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword());
         if(userResult == null || userResult.getUsername().isEmpty()){
             logger.error("errror: " );
             throw new UserNotAuthorizeException("Failed Login");

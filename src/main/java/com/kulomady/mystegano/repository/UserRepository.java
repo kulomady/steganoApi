@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    @Query("select u from User u where u.username = ?1 and u.password = ?2 and u.secreetKey = ?3 ")
-    User findUser(String username, String password, String secreetessage);
+    @Query("select u from User u where u.username = ?1 and u.password = ?2")
+    User findUser(String username, String password);
 }
