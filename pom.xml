@@ -6,7 +6,7 @@
 	<groupId>com.kulomady</groupId>
 	<artifactId>mystegano</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>mystegano</name>
 	<description>Tugas Kuliah untuk matakuliah komputasi terapan </description>
