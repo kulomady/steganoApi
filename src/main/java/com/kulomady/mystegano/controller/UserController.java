@@ -21,6 +21,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -91,7 +94,7 @@ public class UserController {
                     .path(fileName)
                     .toUriString();
 
-            User user = new User(username, password, email, secreet_key, fileDownloadUri);
+            User user = new User(username, md5(password), email, secreet_key, fileDownloadUri);
             userRepository.save(user);
 
            return user;
@@ -102,7 +105,7 @@ public class UserController {
     // Create a new User
     @PostMapping("/login")
     public User login(@Valid @RequestBody User user) throws UserNotAuthorizeException {
-        User userResult =  userRepository.findUser(user.getUsername(),user.getPassword());
+        User userResult =  userRepository.findUser(user.getUsername(),md5(user.getPassword()));
         if(userResult == null || userResult.getUsername().isEmpty()){
             logger.error("errror: " );
             throw new UserNotAuthorizeException("Failed Login");
@@ -145,6 +148,18 @@ public class UserController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    private String md5(String s) {
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            m.update(s.getBytes(), 0, s.length());
+            BigInteger i = new BigInteger(1,m.digest());
+            return String.format("%1$032x", i);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
